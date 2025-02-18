@@ -82,6 +82,63 @@ h2{
     </div>
     <button class="new-btn">reset</button>
     <script src="app.js">
+        const board = document.getElementById("board");
+        const message = document.getElementById("message");
+        let currentPlayer = "X";
+        let gameBoard = ["", "", "", "", "", "", "", "", ""];
+
+        function checkWinner() {
+            const winningCombos = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            
+            for (let combo of winningCombos) {
+                const [a, b, c] = combo;
+                if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                    message.innerText = `${gameBoard[a]} wins!`;
+                    document.querySelectorAll(".cell").forEach(cell => cell.classList.add("taken"));
+                    return true;
+                }
+            }
+            if (!gameBoard.includes("")) {
+                message.innerText = "It's a draw!";
+                return true;
+            }
+            return false;
+        }
+
+        function handleClick(index) {
+            if (!gameBoard[index]) {
+                gameBoard[index] = currentPlayer;
+                document.getElementById(`cell-${index}`).innerText = currentPlayer;
+                document.getElementById(`cell-${index}`).classList.add("taken");
+                if (!checkWinner()) {
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
+                }
+            }
+        }
+
+        function resetGame() {
+            gameBoard = ["", "", "", "", "", "", "", "", ""];
+            board.innerHTML = "";
+            message.innerText = "";
+            currentPlayer = "X";
+            createBoard();
+        }
+
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                let cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.id = `cell-${i}`;
+                cell.addEventListener("click", () => handleClick(i));
+                board.appendChild(cell);
+            }
+        }
+
+        createBoard();
     </script>
 
 </body>
